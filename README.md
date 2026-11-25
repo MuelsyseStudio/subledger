@@ -27,7 +27,7 @@
 
 ```bash
 # 1. 克隆仓库并安装依赖
-git clone https://github.com/zianxu78-ux/subledger.git
+git clone https://github.com/MuelsyseStudio/subledger.git
 cd subledger
 npm install
 
@@ -41,7 +41,7 @@ subledger
 也可以免克隆直接通过 `npx` 运行：
 
 ```bash
-npx github:zianxu78-ux/subledger
+npx github:MuelsyseStudio/subledger
 ```
 
 ---
