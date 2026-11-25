@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SubLedger · 软件订阅开销管家</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230F172A'/><path d='M9 11h14M9 16h10M9 21h6' stroke='%2310B981' stroke-width='2.5' stroke-linecap='round'/><circle cx='22' cy='21' r='3' fill='%2338BDF8'/></svg>" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- 顶部导航栏 -->
+    <header class="top-nav">
+      <div class="brand-group">
+        <div class="brand-logo" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="4" width="18" height="16" rx="3" stroke="currentColor" stroke-width="2"/>
+            <path d="M3 9.5H21" stroke="currentColor" stroke-width="2"/>
+            <path d="M7.5 14.5H12.5" stroke="#10B981" stroke-width="2.2" stroke-linecap="round"/>
+            <circle cx="16.5" cy="14.5" r="1.5" fill="#10B981"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-title-row">
+            <h1 class="brand-title">SubLedger</h1>
+            <span class="brand-badge">订阅账本</span>
+          </div>
+          <p class="brand-subtitle">追踪每一笔软件订阅、AI 截图识图录入、多币种折算与续费预警</p>
+        </div>
+      </div>
+
+      <div class="page-switcher" id="appPageTabs" role="tablist" aria-label="主界面切换">
+        <button type="button" class="page-tab active" data-app-page="subs" role="tab" aria-selected="true">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          <span>订阅与氪金账本</span>
+        </button>
+        <button type="button" class="page-tab" data-app-page="daily" role="tab" aria-selected="false">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>
+          <span>月度日常总账</span>
+        </button>
+      </div>
+
+      <div class="nav-actions">
+        <button type="button" class="btn btn-ghost" id="btnOpenSettings" title="预算与多币种汇率设置">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>预算与汇率</span>
+        </button>
+
+        <button type="button" class="btn btn-ghost" id="btnOpenData" title="导入导出与备份">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>备份/导出</span>
+        </button>
+
+        <button type="button" class="btn btn-icon" id="btnThemeToggle" title="切换深色/浅色模式" aria-label="切换深色/浅色模式">
+          <svg class="icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+
+        <button type="button" class="btn btn-ghost" id="btnNavAiReview" title="根据当前账单生成订阅者人格画像与 AI 点评">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z"/></svg>
+          <span>AI 账单点评</span>
+        </button>
+
+        <button type="button" class="btn btn-ai" id="btnScanScreenshot" title="上传或粘贴会员/账单截图，AI 自动识别填充">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <span>截图智能识别</span>
+        </button>
+
+        <button type="button" class="btn btn-primary" id="btnAddSub">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>新增订阅</span>
+          <kbd class="shortcut-hint">N</kbd>
+        </button>
+      </div>
+    </header>
+
+    <!-- ==================== 界面 1：订阅与单次氪金均摊账本 ==================== -->
+    <main id="subsPageView">
+    <!-- 示例数据提示条 -->
+    <div class="demo-banner hidden" id="demoBanner">
+      <div class="demo-banner-content">
+        <span class="demo-dot"></span>
+        <span>当前展示为<strong>示例订阅数据</strong>，方便您预览多币种折算、拼车均摊与扣款日历效果。所有改动均保存在您的浏览器本地。</span>
+      </div>
+      <div class="demo-banner-actions">
+        <button type="button" class="btn btn-xs btn-outline-danger" id="btnClearDemo">清空并开始记录</button>
+        <button type="button" class="btn btn-xs btn-ghost" id="btnDismissDemo">隐藏提示</button>
+      </div>
+    </div>
+
+    <!-- 核心指标卡片区 -->
+    <section class="kpi-grid" aria-label="核心开销概览">
+      <article class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-label">月均固定开销 (均摊)</span>
+          <button type="button" class="kpi-action-link" id="btnQuickBudget">设预算</button>
+        </div>
+        <div class="kpi-value-row">
+          <span class="kpi-currency">¥</span>
+          <span class="kpi-number" id="kpiMonthly">0.00</span>
+          <span class="kpi-unit">/月</span>
+        </div>
+        <div class="kpi-subtext" id="kpiDailySub">日均成本 ¥0.00 · 生效中 0 项</div>
+        <div class="budget-bar-wrap" id="budgetBarWrap">
+          <div class="budget-bar-labels">
+            <span id="budgetStatusText">月度预算 ¥3,500</span>
+            <span id="budgetPercentText">0%</span>
+          </div>
+          <div class="budget-track">
+            <div class="budget-fill" id="budgetFill" style="width: 0%"></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-label">年度预计总支出</span>
+          <span class="kpi-pill" id="kpiActiveCountPill">0 项订阅</span>
+        </div>
+        <div class="kpi-value-row">
+          <span class="kpi-currency">¥</span>
+          <span class="kpi-number" id="kpiYearly">0.00</span>
+          <span class="kpi-unit">/年</span>
+        </div>
+        <div class="kpi-subtext" id="kpiTrialSub">不含免费试用期未转正项目</div>
+        <div class="kpi-footer-note" id="kpiLifetimeSub">买断制软件资产：0 项 (¥0)</div>
+      </article>
+
+      <article class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-label" id="kpiThisMonthLabel">本月实际账单</span>
+          <span class="kpi-pill kpi-pill-blue" id="kpiThisMonthCount">共 0 笔</span>
+        </div>
+        <div class="kpi-value-row">
+          <span class="kpi-currency">¥</span>
+          <span class="kpi-number" id="kpiThisMonthTotal">0.00</span>
+        </div>
+        <div class="cashflow-split">
+          <div class="cashflow-split-item">
+            <span class="dot dot-paid"></span>
+            <span>已付 <strong id="kpiThisMonthPaid">¥0.00</strong></span>
+          </div>
+          <div class="cashflow-split-divider"></div>
+          <div class="cashflow-split-item">
+            <span class="dot dot-pending"></span>
+            <span>待付 <strong id="kpiThisMonthRemaining">¥0.00</strong></span>
+          </div>
+        </div>
+        <div class="kpi-footer-note" id="kpiThisMonthHint">按自然月统计实际扣款金额</div>
+      </article>
+
+      <article class="kpi-card" id="kpiUpcomingCard">
+        <div class="kpi-header">
+          <span class="kpi-label" id="kpiUpcomingLabel">近 14 天续费预警</span>
+          <span class="kpi-pill" id="kpiUpcomingBadge">0 笔临近</span>
+        </div>
+        <div class="kpi-value-row">
+          <span class="kpi-currency">¥</span>
+          <span class="kpi-number" id="kpiUpcomingAmount">0.00</span>
+        </div>
+        <div class="upcoming-highlight" id="kpiNearestItem">
+          近期无即将扣款的订阅
+        </div>
+        <div class="kpi-footer-note" id="kpiTrialAlertText">自动续费与试用期到期监控中</div>
+      </article>
+    </section>
+
+    <!-- AI 订阅者画像与账单点评区 -->
+    <section class="persona-section panel-card" id="aiPersonaSection" aria-label="AI 订阅者画像与账单点评">
+      <div class="persona-header">
+        <div class="persona-title-group">
+          <div class="persona-sparkle-icon" aria-hidden="true">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"/></svg>
+          </div>
+          <div>
+            <div class="persona-title-line">
+              <h2 class="panel-title">AI 订阅者画像与账单点评</h2>
+              <span class="persona-time-pill hidden" id="aiReviewTimestamp">刚刚生成</span>
+            </div>
+            <p class="panel-desc">基于您的订阅组合、跨区技巧与开销结构，解读您是什么样的数字生活玩家</p>
+          </div>
+        </div>
+
+        <div class="persona-controls">
+          <div class="segmented-control" id="aiReviewModeTabs" role="tablist">
+            <button type="button" class="seg-btn active" data-review-mode="insight" role="tab" aria-selected="true">深度画像</button>
+            <button type="button" class="seg-btn" data-review-mode="roast" role="tab" aria-selected="false">毒舌锐评</button>
+          </div>
+          <button type="button" class="btn btn-xs btn-ai" id="btnGenerateReview">
+            <span id="btnGenerateReviewText">生成 AI 点评</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="aiReviewBody" class="persona-body"></div>
+    </section>
+
+    <!-- 可视化分析区：左分类占比 + 右现金流预测/日历 -->
+    <section class="analytics-grid" aria-label="支出结构与日历分析">
+      <div class="panel-card">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">开销分类占比</h2>
+            <p class="panel-desc">点击分类可快速筛选下方订阅列表</p>
+          </div>
+          <button type="button" class="btn btn-xs btn-ghost hidden" id="btnResetCatFilter">清除筛选</button>
+        </div>
+
+        <div class="category-chart-layout" id="categoryChartContainer">
+          <div class="donut-box">
+            <svg id="donutSvg" viewBox="0 0 200 200" class="donut-svg" aria-label="分类占比环形图"></svg>
+            <div class="donut-center" id="donutCenter">
+              <span class="donut-center-label">月均总计</span>
+              <strong class="donut-center-value">¥0</strong>
+              <span class="donut-center-sub">100%</span>
+            </div>
+          </div>
+          <div class="category-legend" id="categoryLegend"></div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-header panel-header-tabs">
+          <div>
+            <h2 class="panel-title" id="rightPanelTitle">未来 12 个月账单预测</h2>
+            <p class="panel-desc" id="rightPanelDesc">包含按月扣款与年付/季付软件的集中续费高峰</p>
+          </div>
+          <div class="segmented-control" role="tablist">
+            <button type="button" class="seg-btn active" data-panel-tab="forecast" role="tab" aria-selected="true">12个月趋势</button>
+            <button type="button" class="seg-btn" data-panel-tab="calendar" role="tab" aria-selected="false">扣款日历</button>
+          </div>
+        </div>
+
+        <div id="forecastView" class="panel-body">
+          <div class="forecast-chart-area" id="forecastBars"></div>
+          <div class="forecast-detail-bar" id="forecastDetail">
+            <span class="muted">将鼠标悬停或点击任意月份柱状条，查看该月扣款明细</span>
+          </div>
+        </div>
+
+        <div id="calendarView" class="panel-body hidden">
+          <div class="calendar-toolbar">
+            <div class="calendar-nav-group">
+              <button type="button" class="btn btn-icon btn-sm" id="btnCalPrev" aria-label="上个月">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <strong class="calendar-month-title" id="calMonthTitle">2026年 11月</strong>
+              <button type="button" class="btn btn-icon btn-sm" id="btnCalNext" aria-label="下个月">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+              <button type="button" class="btn btn-xs btn-ghost" id="btnCalToday">今天</button>
+            </div>
+            <div class="calendar-month-summary" id="calMonthSummary">当月扣款 ¥0.00</div>
+          </div>
+
+          <div class="calendar-weekdays">
+            <span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span>
+          </div>
+          <div class="calendar-grid" id="calendarGrid"></div>
+          <div class="calendar-day-detail" id="calendarDayDetail"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 订阅列表管理区 -->
+    <section class="list-section" aria-label="订阅列表">
+      <div class="list-toolbar">
+        <div class="status-tabs" id="statusTabs" role="tablist">
+          <button type="button" class="status-tab active" data-status="all">全部 <span class="tab-count" id="countAll">0</span></button>
+          <button type="button" class="status-tab" data-status="active">生效中 <span class="tab-count" id="countActive">0</span></button>
+          <button type="button" class="status-tab" data-status="trial">试用中 <span class="tab-count" id="countTrial">0</span></button>
+          <button type="button" class="status-tab" data-status="lifetime">买断制 <span class="tab-count" id="countLifetime">0</span></button>
+          <button type="button" class="status-tab" data-status="paused">已停用 <span class="tab-count" id="countPaused">0</span></button>
+        </div>
+
+        <div class="filter-controls">
+          <div class="search-box">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="search" id="searchInput" placeholder="搜索名称、账号、支付方式..." autocomplete="off" />
+          </div>
+
+          <select id="categoryFilter" class="control-select" aria-label="按分类筛选">
+            <option value="all">全部分类</option>
+          </select>
+
+          <select id="cycleFilter" class="control-select" aria-label="按计费周期筛选">
+            <option value="all">全部周期</option>
+            <option value="monthly">按月</option>
+            <option value="yearly">按年</option>
+            <option value="biennial">按两年</option>
+            <option value="quarterly">按季</option>
+            <option value="semiannual">按半年</option>
+            <option value="weekly">按周</option>
+            <option value="oneoff">单次均摊</option>
+            <option value="lifetime">买断制</option>
+          </select>
+
+          <select id="sortSelect" class="control-select" aria-label="排序方式">
+            <option value="nextBill">最近续费优先</option>
+            <option value="monthlyDesc">月均开销：高 → 低</option>
+            <option value="monthlyAsc">月均开销：低 → 高</option>
+            <option value="yearlyDesc">年化支出：高 → 低</option>
+            <option value="nameAsc">按软件名称 A-Z</option>
+          </select>
+
+          <div class="view-switcher" role="group" aria-label="视图模式">
+            <button type="button" class="view-btn active" data-view="grid" title="卡片视图" aria-label="卡片视图">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+            </button>
+            <button type="button" class="view-btn" data-view="table" title="表格视图" aria-label="表格视图">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="subscriptionListContainer"></div>
+    </section>
+    </main>
+
+    <!-- ==================== 界面 2：月度日常总账（AI 月结单导入 + 自动防重） ==================== -->
+    <main id="dailyPageView" class="hidden">
+      <div class="daily-top-bar panel-card">
+        <div class="daily-month-nav">
+          <button type="button" class="btn btn-icon btn-sm" id="btnDailyPrevMonth" aria-label="上个月">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <strong class="daily-month-title" id="dailyMonthLabel">2026年 11月</strong>
+          <button type="button" class="btn btn-icon btn-sm" id="btnDailyNextMonth" aria-label="下个月">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <button type="button" class="btn btn-xs btn-ghost" id="btnDailyThisMonth">本月</button>
+        </div>
+
+        <div class="daily-top-actions">
+          <div class="segmented-control" id="dailyBasisTabs" role="tablist" title="选择订阅部分按当月实际扣款合成，还是按每月固定均摊合成">
+            <button type="button" class="seg-btn active" data-daily-basis="cashflow">按当月实付合成</button>
+            <button type="button" class="seg-btn" data-daily-basis="amortized">按月均摊销合成</button>
+          </div>
+
+          <button type="button" class="btn btn-ai" id="btnDailyScanBill">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <span>导入微信/支付宝月结图</span>
+          </button>
+
+          <button type="button" class="btn btn-primary" id="btnOpenManualBill">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>手动记月账单</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 月度总账 4 张核心汇总卡片 -->
+      <section class="kpi-grid" aria-label="当月全口径收支概览">
+        <article class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-label">当月去重净总支出</span>
+            <span class="kpi-pill kpi-pill-blue">全口径真实消费</span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-currency">¥</span>
+            <span class="kpi-number" id="dkpiNetTotal">0.00</span>
+          </div>
+          <div class="kpi-subtext" id="dkpiDailyAvg">全口径日均 ¥0.00 / 天</div>
+          <div class="kpi-footer-note">订阅氪金仓 + 剔除重合后的净日常开销</div>
+        </article>
+
+        <article class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-label" id="dkpiSubBasisLabel">订阅与氪金仓 (当月实付)</span>
+            <span class="kpi-pill" id="dkpiSubSharePill">占比 0%</span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-currency">¥</span>
+            <span class="kpi-number" id="dkpiSubTotal">0.00</span>
+          </div>
+          <div class="kpi-subtext" id="dkpiSubSubtext">自动从「订阅与氪金账本」同步</div>
+          <div class="kpi-footer-note" id="dkpiAddonHint">含单次游戏氪金与加购项目</div>
+        </article>
+
+        <article class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-label">净日常弹性消费</span>
+            <span class="kpi-pill" id="dkpiLivingSharePill">占比 0%</span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-currency">¥</span>
+            <span class="kpi-number" id="dkpiLivingNet">0.00</span>
+          </div>
+          <div class="kpi-subtext" id="dkpiLivingGrossSub">账单原始总额 ¥0.00</div>
+          <div class="kpi-footer-note">餐饮、网购、交通等纯生活消费净额</div>
+        </article>
+
+        <article class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-label">智能防重拦截额</span>
+            <span class="kpi-pill kpi-pill-blue" id="dkpiDedupCountPill">0 笔核销</span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-currency">-¥</span>
+            <span class="kpi-number" id="dkpiDedupAmount">0.00</span>
+          </div>
+          <div class="kpi-subtext">已从微信/支付宝总额中自动剥离</div>
+          <div class="kpi-footer-note">防止订阅自动扣款与月结单重复统计</div>
+        </article>
+      </section>
+
+      <!-- 双栏主体：左全景构成与防重核销，右月结单截图导入与明细 -->
+      <div class="daily-main-grid">
+        <div class="daily-left-stack">
+          <section class="panel-card">
+            <div class="panel-header">
+              <div>
+                <h2 class="panel-title">全月真实消费构成全景</h2>
+                <p class="panel-desc">合并对比「AI 与软件订阅」、「游戏月卡与氪金」及「日常生活各分类」比重</p>
+              </div>
+            </div>
+            <div id="dailyPanoramaContainer"></div>
+          </section>
+
+          <section class="panel-card">
+            <div class="panel-header">
+              <div>
+                <h2 class="panel-title">当月订阅与氪金重合核销清单</h2>
+                <p class="panel-desc">勾选代表该笔订阅是通过您导入的微信/支付宝账单扣款的，系统会自动从日常总额中减去它以防算双倍</p>
+              </div>
+            </div>
+            <div id="dedupListContainer"></div>
+          </section>
+        </div>
+
+        <div class="daily-right-stack">
+          <section class="panel-card">
+            <div class="panel-header">
+              <div>
+                <h2 class="panel-title">月度日常账单导入仓</h2>
+                <p class="panel-desc">平时无需逐笔记碎账，月底截一张微信 + 支付宝月度统计图即可合成全月总账</p>
+              </div>
+            </div>
+
+            <div class="ai-vision-box" id="dailyVisionDropzone" style="margin-bottom: 16px;">
+              <div class="ai-vision-left">
+                <div class="ai-vision-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                </div>
+                <div class="ai-vision-text">
+                  <strong id="dailyVisionTitle">粘贴微信 / 支付宝月账单统计图</strong>
+                  <span id="dailyVisionStatus">拖入图片或直接在本页按 <kbd>Ctrl+V</kbd> 粘贴截图，AI 自动提取各分类消费并关联防重</span>
+                </div>
+              </div>
+              <label class="btn btn-xs btn-ai-outline">
+                <span>选择月账单图</span>
+                <input type="file" id="inputMonthlyBillFile" accept="image/*" hidden />
+              </label>
+            </div>
+
+            <div id="monthlyBillsList"></div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      <span id="footerStorageHint">SubLedger · 数据私密存储在本地，支持 subledger CLI 本地落盘同步与 JSON / CSV 备份</span>
+      <div class="footer-rate-group">
+        <span class="live-rate-dot" id="footerRateDot"></span>
+        <span id="footerRateHint">实时汇率基准：CNY (¥)</span>
+        <button type="button" class="kpi-action-link" id="btnFooterSyncRates">刷新汇率</button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- 弹窗 1：新增 / 编辑订阅 -->
+  <div class="modal-backdrop hidden" id="subModal" role="dialog" aria-modal="true" aria-labelledby="subModalTitle">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" id="subModalTitle">新增软件订阅</h3>
+          <p class="modal-subtitle">上传或按 Ctrl+V 粘贴截图即可 AI 自动填表，也可点选下方常见模板</p>
+        </div>
+        <button type="button" class="btn btn-icon modal-close" data-close-modal="subModal" aria-label="关闭">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <form id="subForm" class="modal-body">
+        <input type="hidden" id="subId" />
+        <input type="hidden" id="subCustomLogo" />
+        <input type="hidden" id="subIcon" />
+        <input type="hidden" id="subColor" value="#2563eb" />
+
+        <!-- AI 截图智能识别区（新增与编辑均可用！方便随时补查到期时间截图） -->
+        <div class="ai-vision-box" id="aiVisionDropzone">
+          <div class="ai-vision-left">
+            <div class="ai-vision-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </div>
+            <div class="ai-vision-text">
+              <strong id="aiVisionTitle">AI 截图智能填充</strong>
+              <span id="aiVisionStatus">拖入账单/会员中心截图，或直接按 <kbd>Ctrl+V</kbd> 粘贴截图自动识别名称、价格与到期日</span>
+            </div>
+          </div>
+          <label class="btn btn-xs btn-ai-outline" id="btnPickScreenshotLabel">
+            <span>选择截图</span>
+            <input type="file" id="inputScreenshotFile" accept="image/*" hidden />
+          </label>
+        </div>
+
+        <!-- 预设快捷栏 -->
+        <div class="preset-picker-wrap" id="presetSection">
+          <div class="preset-picker-header">
+            <span class="form-label-sm">常用软件快速填充</span>
+            <input type="text" id="presetSearch" class="preset-search-input" placeholder="筛选模板 (如 B站, QQ音乐, Keep)..." />
+          </div>
+          <div class="preset-chips" id="presetChips"></div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-field">
+            <label for="subName">软件 / 服务名称 <span class="req">*</span></label>
+            <input type="text" id="subName" required placeholder="例如：ChatGPT Pro、哔哩哔哩大会员" maxlength="50" />
+          </div>
+
+          <div class="form-field">
+            <label for="subCategory">所属分类</label>
+            <select id="subCategory"></select>
+          </div>
+        </div>
+
+        <!-- 软件真实图标选择与图片上传 -->
+        <div class="logo-picker-row">
+          <div class="avatar-preview-box" id="formAvatarPreviewWrap"></div>
+          <div class="form-field">
+            <label for="subBrandKey">软件图标样式</label>
+            <select id="subBrandKey">
+              <option value="auto">智能自动识别图标 (推荐)</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>获取 / 上传图标 (选填)</label>
+            <div class="logo-upload-actions">
+              <button type="button" class="btn btn-secondary btn-upload" id="btnSearchAppIcon" title="按软件名称从应用商店抓取真实高清图标">
+                <span>搜官方图标</span>
+              </button>
+              <label class="btn btn-secondary btn-upload">
+                <span>本地图片</span>
+                <input type="file" id="subLogoUpload" accept="image/*" hidden />
+              </label>
+              <button type="button" class="btn btn-xs btn-ghost hidden" id="btnClearCustomLogo">重置</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <!-- 计费金额、恢复原价、币种、周期与拼车 -->
+        <div class="form-grid-5">
+          <div class="form-field">
+            <label for="subPrice">当前/首期金额 <span class="req">*</span></label>
+            <input type="number" id="subPrice" required min="0" step="0.01" placeholder="15.00" />
+          </div>
+
+          <div class="form-field">
+            <label for="subRegularPrice" title="如首月特惠、次月恢复原价，可填入原价以便精准预估后续续费">续费原价 (选填)</label>
+            <input type="number" id="subRegularPrice" min="0" step="0.01" placeholder="无变化留空" />
+          </div>
+
+          <div class="form-field">
+            <label for="subCurrency">计费币种</label>
+            <select id="subCurrency"></select>
+          </div>
+
+          <div class="form-field">
+            <label for="subCycle">计费周期</label>
+            <select id="subCycle"></select>
+          </div>
+
+          <div class="form-field">
+            <label for="subSplit" title="如家庭组拼车，输入总人数自动折算个人均摊费用">分摊人数</label>
+            <input type="number" id="subSplit" min="1" max="99" step="1" value="1" />
+          </div>
+        </div>
+
+        <!-- 实时费用折算预览条 -->
+        <div class="live-calc-preview" id="liveCalcPreview">
+          <span>折算个人成本：<strong>¥0.00 / 月</strong> · 年化 <strong>¥0.00 / 年</strong></span>
+        </div>
+
+        <!-- 状态、续费日期、自动续费 -->
+        <div class="form-grid-3">
+          <div class="form-field">
+            <label for="subStatus">当前状态</label>
+            <select id="subStatus">
+              <option value="active">生效中</option>
+              <option value="trial">免费试用中</option>
+              <option value="paused">已暂停 / 已退订</option>
+            </select>
+          </div>
+
+          <div class="form-field" id="nextBillFieldWrap">
+            <label for="subNextBill" id="subNextBillLabel">下次扣款 / 到期日 (可后补)</label>
+            <input type="date" id="subNextBill" />
+          </div>
+
+          <div class="form-field hidden" id="amortizeFieldWrap">
+            <label for="subAmortizeMonths">分摊月数 (1=仅均摊到当月)</label>
+            <input type="number" id="subAmortizeMonths" min="1" max="60" step="1" value="1" />
+          </div>
+
+          <div class="form-field">
+            <label for="subStartDate" id="subStartDateLabel">首次订阅日期 (选填)</label>
+            <input type="date" id="subStartDate" />
+          </div>
+        </div>
+
+        <div class="toggle-row" id="autoRenewRow">
+          <label class="switch-label" for="subAutoRenew">
+            <input type="checkbox" id="subAutoRenew" checked />
+            <span class="switch-slider"></span>
+            <span class="switch-text">
+              <strong>开启自动续费</strong>
+              <small id="autoRenewHint">到期日将计入待付账单，并在过后自动顺延至下一周期</small>
+            </span>
+          </label>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <!-- 扣款渠道、账号与备注 -->
+        <div class="form-grid-2">
+          <div class="form-field">
+            <label for="subPayment">扣款渠道 / 支付方式</label>
+            <input type="text" id="subPayment" list="paymentMethodList" placeholder="例如：支付宝、微信、Visa" />
+            <datalist id="paymentMethodList"></datalist>
+          </div>
+
+          <div class="form-field">
+            <label for="subAccount">区服 / 绑定账号</label>
+            <input type="text" id="subAccount" placeholder="例如：菲律宾区、美区原价、手机号" />
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-field">
+            <label for="subUrl">订阅管理 / 官网链接 (选填)</label>
+            <input type="url" id="subUrl" placeholder="https://..." />
+          </div>
+
+          <div class="form-field">
+            <label for="subNote">备注说明 (选填)</label>
+            <input type="text" id="subNote" placeholder="例如：首月优惠 $15，次月恢复 $30" />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" data-close-modal="subModal">取消</button>
+          <button type="submit" class="btn btn-primary">保存订阅</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 弹窗 2：预算与多币种汇率设置 -->
+  <div class="modal-backdrop hidden" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" id="settingsModalTitle">预算与汇率设置</h3>
+          <p class="modal-subtitle">外币订阅将按以下汇率折算为人民币 (CNY) 进行汇总统计</p>
+        </div>
+        <button type="button" class="btn btn-icon modal-close" data-close-modal="settingsModal" aria-label="关闭">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <form id="settingsForm" class="modal-body">
+        <div class="form-grid-2">
+          <div class="form-field">
+            <label for="settingBudget">每月订阅预算上限 (¥ CNY)</label>
+            <input type="number" id="settingBudget" min="0" step="100" placeholder="3500" />
+            <small class="field-hint">设为 0 则不显示超支预警</small>
+          </div>
+
+          <div class="form-field">
+            <label for="settingAlertDays">临近续费提醒天数</label>
+            <select id="settingAlertDays">
+              <option value="7">提前 7 天提醒</option>
+              <option value="14">提前 14 天提醒</option>
+              <option value="30">提前 30 天提醒</option>
+            </select>
+            <small class="field-hint">控制右上角预警卡片统计范围</small>
+          </div>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <div class="toggle-row">
+          <label class="switch-label" for="settingAutoSyncRates">
+            <input type="checkbox" id="settingAutoSyncRates" checked />
+            <span class="switch-slider"></span>
+            <span class="switch-text">
+              <strong>自动同步国际实时汇率 (每 6 小时自动更新)</strong>
+              <small id="liveRateStatusText">连接全球外汇中间价接口自动更新，如手动修改汇率可关闭此开关锁定自定义值</small>
+            </span>
+          </label>
+        </div>
+
+        <div class="rates-header">
+          <span class="form-label-sm">外币折算人民币汇率 (1 外币 = ? CNY)</span>
+          <button type="button" class="btn btn-xs btn-ai-outline" id="btnFetchLiveRates">立即同步实时汇率</button>
+        </div>
+        <div class="rates-grid" id="ratesGrid"></div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" data-close-modal="settingsModal">取消</button>
+          <button type="submit" class="btn btn-primary">保存设置</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 弹窗 3：数据导入 / 导出 / 备份 -->
+  <div class="modal-backdrop hidden" id="dataModal" role="dialog" aria-modal="true" aria-labelledby="dataModalTitle">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" id="dataModalTitle">数据备份与迁移</h3>
+          <p class="modal-subtitle">您的数据仅保存在本机浏览器中，建议定期导出备份</p>
+        </div>
+        <button type="button" class="btn btn-icon modal-close" data-close-modal="dataModal" aria-label="关闭">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body data-actions-stack">
+        <div class="data-action-item">
+          <div>
+            <strong>导出 JSON 完整备份</strong>
+            <p>包含全部订阅记录、预算设置与自定义汇率，可用于跨设备恢复</p>
+          </div>
+          <button type="button" class="btn btn-secondary" id="btnExportJson">导出 JSON</button>
+        </div>
+
+        <div class="data-action-item">
+          <div>
+            <strong>导出 CSV 表格 (Excel 兼容)</strong>
+            <p>自带 UTF-8 BOM 编码，可直接用 Excel / WPS / Numbers 打开做账</p>
+          </div>
+          <button type="button" class="btn btn-secondary" id="btnExportCsv">导出 CSV</button>
+        </div>
+
+        <div class="data-action-item">
+          <div>
+            <strong>从 JSON 备份文件恢复</strong>
+            <p>导入此前导出的 .json 备份文件（将覆盖当前列表）</p>
+          </div>
+          <label class="btn btn-secondary file-btn-label">
+            选择文件导入
+            <input type="file" id="inputImportJson" accept=".json,application/json" hidden />
+          </label>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <div class="data-action-item">
+          <div>
+            <strong>重置数据</strong>
+            <p>重新载入示例数据，或彻底清空所有订阅记录</p>
+          </div>
+          <div class="inline-btns">
+            <button type="button" class="btn btn-xs btn-ghost" id="btnLoadDemo">恢复示例数据</button>
+            <button type="button" class="btn btn-xs btn-outline-danger" id="btnClearAllData">清空全部记录</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 弹窗 4：挂载单次消费 / 游戏氪金均摊 -->
+  <div class="modal-backdrop hidden" id="addonModal" role="dialog" aria-modal="true" aria-labelledby="addonModalTitle">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" id="addonModalTitle">记录单次氪金 / 加购</h3>
+          <p class="modal-subtitle">单次消费将按所选月数均摊（默认均摊到当月），期满自动归零不污染长期月卡预测</p>
+        </div>
+        <button type="button" class="btn btn-icon modal-close" data-close-modal="addonModal" aria-label="关闭">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <form id="addonForm" class="modal-body">
+        <input type="hidden" id="addonSubId" />
+
+        <div class="form-grid-2">
+          <div class="form-field">
+            <label for="addonTitle">消费 / 礼包说明 <span class="req">*</span></label>
+            <input type="text" id="addonTitle" required placeholder="例如：648 源石首充、周年寻访组合包、API 充值" maxlength="40" />
+          </div>
+
+          <div class="form-field">
+            <label for="addonDate">消费日期</label>
+            <input type="date" id="addonDate" required />
+          </div>
+        </div>
+
+        <div class="form-grid-3">
+          <div class="form-field">
+            <label for="addonPrice">实付金额 <span class="req">*</span></label>
+            <input type="number" id="addonPrice" required min="0.01" step="0.01" placeholder="648" />
+          </div>
+
+          <div class="form-field">
+            <label for="addonCurrency">币种</label>
+            <select id="addonCurrency"></select>
+          </div>
+
+          <div class="form-field">
+            <label for="addonAmortize">均摊周期</label>
+            <select id="addonAmortize">
+              <option value="1">均摊到 1 个月 (当月)</option>
+              <option value="2">均摊到 2 个月 (版本池)</option>
+              <option value="3">均摊到 3 个月 (按季)</option>
+              <option value="6">均摊到 6 个月 (半年)</option>
+              <option value="12">均摊到 12 个月 (全年)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="addonPayment">支付方式 (用于月度日常总账自动防重)</label>
+          <input type="text" id="addonPayment" list="paymentMethodList" placeholder="例如：支付宝自动扣款、微信支付" />
+        </div>
+
+        <div id="addonHistorySection" class="addon-history-wrap hidden">
+          <div class="form-divider"></div>
+          <span class="form-label-sm">该项目的历史单次加购记录</span>
+          <div id="addonHistoryList" class="addon-history-list"></div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" data-close-modal="addonModal">关闭</button>
+          <button type="submit" class="btn btn-primary">添加这笔消费</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 弹窗 5：手动录入 / 编辑月度日常账单 -->
+  <div class="modal-backdrop hidden" id="dailyBillModal" role="dialog" aria-modal="true" aria-labelledby="dailyBillModalTitle">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" id="dailyBillModalTitle">录入月度日常账单</h3>
+          <p class="modal-subtitle">可填写微信/支付宝月度总支出或各分类明细，重合的订阅项会自动剥离</p>
+        </div>
+        <button type="button" class="btn btn-icon modal-close" data-close-modal="dailyBillModal" aria-label="关闭">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <form id="dailyBillForm" class="modal-body">
+        <input type="hidden" id="mbId" />
+
+        <div class="form-grid-2">
+          <div class="form-field">
+            <label for="mbSource">账单渠道</label>
+            <select id="mbSource">
+              <option value="alipay">支付宝月账单</option>
+              <option value="wechat">微信支付月账单</option>
+              <option value="card">银行卡 / 信用卡月结单</option>
+              <option value="other">其他日常开销</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="mbTotal">账单原始总支出 (¥ CNY) <span class="req">*</span></label>
+            <input type="number" id="mbTotal" required min="0" step="0.01" placeholder="例如：3800" />
+          </div>
+        </div>
+
+        <div class="form-label-sm">分类构成明细 (选填，填写后自动汇总总额并生成全景占比)</div>
+        <div class="rates-grid" id="mbCategoriesGrid"></div>
+
+        <div class="form-field">
+          <label for="mbNote">备注说明 (选填)</label>
+          <input type="text" id="mbNote" placeholder="例如：11月支付宝消费汇总" />
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" data-close-modal="dailyBillModal">取消</button>
+          <button type="submit" class="btn btn-primary">保存月度账单</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 轻量消息提示 Toast -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <script src="logos.js" defer></script>
+  <script src="presets.js" defer></script>
+  <script src="app.js" defer></script>
+</body>
+</html>

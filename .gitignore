@@ -1,0 +1,16 @@
+# Dependencies & platform caches
+node_modules/
+.netlify/
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Local data & OS artifacts
+*.lnk
+*.log
+*.local.json
+data/
+.DS_Store
+Thumbs.db
